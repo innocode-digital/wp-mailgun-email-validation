@@ -32,8 +32,17 @@ or [WP-CLI](https://make.wordpress.org/cli/handbook/): `wp plugin activate wp-ma
 Add required constant (usually to `wp-config.php`):
 
 ````
+define( 'MAILGUN_API_KEY', '' );
+````
+
+or
+
+````
 define( 'MAILGUN_APIKEY', '' );
 ````
+
+You could use either one of these constants. `MAILGUN_APIKEY` is used also by
+[Mailgun for WordPress](https://github.com/mailgun/wordpress-plugin) plugin.
 
 ### Documentation
 
