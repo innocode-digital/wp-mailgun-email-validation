@@ -123,7 +123,7 @@ final class Plugin
             return true;
         }
 
-        $cache_key = sprintf( 'innocode_mailgun_email_validation%s', md5( $email ) );
+        $cache_key = sprintf( 'innocode_mailgun_email_validation_%s', md5( $email ) );
         $cache_value = wp_cache_get( $cache_key );
 
         if ( false !== $cache_value ) {
