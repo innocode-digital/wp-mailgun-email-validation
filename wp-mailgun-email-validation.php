@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Mailgun Email Validation
  * Description: Validates email address through Mailgun.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Innocode
  * Author URI: https://innocode.com
  * Tested up to: 5.3.2
@@ -28,7 +28,7 @@ if ( ! function_exists( 'innocode_mailgun_email_validation_init' ) ) {
 }
 
 if ( defined( 'MAILGUN_API_KEY' ) || defined( 'MAILGUN_APIKEY' ) ) {
-    $GLOBALS['innocode_mailgun_email_validation_init'] = new EmailValidation\Plugin();
+    $GLOBALS['innocode_mailgun_email_validation'] = new EmailValidation\Plugin();
 
     add_action( 'init', 'innocode_mailgun_email_validation_init' );
 }
