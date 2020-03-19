@@ -41,7 +41,10 @@ if ( ! function_exists( 'innocode_mailgun_email_validation' ) ) {
         global $innocode_mailgun_email_validation;
 
         if ( is_null( $innocode_mailgun_email_validation ) ) {
-            trigger_error('Missing required constants MAILGUN_API_KEY or MAILGUN_APIKEY.', E_USER_ERROR);
+            trigger_error(
+                'Missing required constants MAILGUN_API_KEY or MAILGUN_APIKEY.',
+                E_USER_ERROR
+            );
         }
 
         return $innocode_mailgun_email_validation;
