@@ -16,21 +16,11 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
     require_once __DIR__ . '/vendor/autoload.php';
 }
 
-if ( ! function_exists( 'innocode_mailgun_email_validation_init' ) ) {
-    function innocode_mailgun_email_validation_init() {
-        /**
-         * @var EmailValidation\Plugin $innocode_mailgun_email_validation
-         */
-        global $innocode_mailgun_email_validation;
-
-        $innocode_mailgun_email_validation->run();
-    }
-}
-
 if ( defined( 'MAILGUN_API_KEY' ) || defined( 'MAILGUN_APIKEY' ) ) {
-    $GLOBALS['innocode_mailgun_email_validation'] = new EmailValidation\Plugin();
+    $innocode_mailgun_email_validation = new EmailValidation\Plugin();
+    $innocode_mailgun_email_validation->run();
 
-    add_action( 'init', 'innocode_mailgun_email_validation_init' );
+    $GLOBALS['innocode_mailgun_email_validation'] = $innocode_mailgun_email_validation;
 }
 
 if ( ! function_exists( 'innocode_mailgun_email_validation' ) ) {
