@@ -15,13 +15,13 @@ class Client
      *
      * @var string
      */
-    private $_url;
+    private $url;
     /**
      * API basic auth header
      *
      * @var string
      */
-    private $_auth;
+    private $auth;
 
     /**
      * Client constructor.
@@ -31,8 +31,8 @@ class Client
      */
     public function __construct( $url, $private_key )
     {
-        $this->_url = $url;
-        $this->_auth = base64_encode( "api:$private_key" );
+        $this->url = $url;
+        $this->auth = base64_encode( "api:$private_key" );
     }
 
     /**
@@ -43,7 +43,7 @@ class Client
      */
     public function get_url( $endpoint = '' )
     {
-        return trailingslashit( $this->_url ) . ltrim( $endpoint, '/' );
+        return trailingslashit( $this->url ) . ltrim( $endpoint, '/' );
     }
 
     /**
@@ -53,7 +53,7 @@ class Client
      */
     public function get_auth()
     {
-        return $this->_auth;
+        return $this->auth;
     }
 
     /**
@@ -64,7 +64,7 @@ class Client
      */
     public function validate( $email )
     {
-        return $this->_request( '/v4/address/validate', [
+        return $this->request( '/v4/address/validate', [
             'address' => $email,
         ] );
     }
@@ -77,7 +77,7 @@ class Client
      * @param string     $method
      * @return array|WP_Error
      */
-    protected function _request( $endpoint, array $body = null, $method = 'GET' )
+    protected function request( $endpoint, array $body = null, $method = 'GET' )
     {
         $response = wp_remote_request( $this->get_url( $endpoint ), [
             'method'  => $method,

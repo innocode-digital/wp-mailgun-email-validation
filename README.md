@@ -71,10 +71,10 @@ add_filter( 'innocode_mailgun_email_validation_validated', function ( $validated
 } );
 ```
 
-It's possible also to use `validate` methods from plugin:
+It's possible also to use `validate` and `is_valid` methods from plugin:
 
 * `innocode_mailgun_email_validation()->get_client()->validate( $email )` - validates email
 address with [Mailgun Email Validation](https://documentation.mailgun.com/en/latest/api-email-validation.html).
 
-* `innocode_mailgun_email_validation()->validate( $email )` - uses previous method but also
-applies filters and caches result.
+* `innocode_mailgun_email_validation()->is_valid( $email )` - uses previous method but also
+applies filters and caches result, returns boolean value.

@@ -2,6 +2,10 @@
 
 namespace Innocode\Mailgun\EmailValidation;
 
+use WP_Error;
+use WP_REST_Request;
+use WP_REST_Server;
+
 /**
  * Class Plugin
  * @package Innocode\Mailgun\EmailValidation
@@ -13,13 +17,13 @@ final class Plugin
      *
      * @var string
      */
-    private $_key;
+    private $key;
     /**
      * API Client
      *
      * @var Client
      */
-    private $_client;
+    private $client;
 
     /**
      * Plugin constructor.
@@ -27,15 +31,15 @@ final class Plugin
     public function __construct()
     {
         if ( defined( 'MAILGUN_API_KEY' ) ) {
-            $this->_key = MAILGUN_API_KEY;
+            $this->key = MAILGUN_API_KEY;
         } elseif ( defined('MAILGUN_APIKEY') ) {
             // Try to use constant from Mailgun for WordPress plugin https://github.com/mailgun/wordpress-plugin
-            $this->_key = MAILGUN_APIKEY;
+            $this->key = MAILGUN_APIKEY;
         } else {
-            $this->_key = '';
+            $this->key = '';
         }
 
-        $this->_client = new Client(
+        $this->client = new Client(
             defined( 'MAILGUN_API_URL' )
                 ? MAILGUN_API_URL
                 : 'https://api.mailgun.net',
@@ -50,7 +54,7 @@ final class Plugin
      */
     public function get_key()
     {
-        return $this->_key;
+        return $this->key;
     }
 
     /**
@@ -60,7 +64,7 @@ final class Plugin
      */
     public function get_client()
     {
-        return $this->_client;
+        return $this->client;
     }
 
     /**
@@ -68,7 +72,36 @@ final class Plugin
      */
     public function run()
     {
+        add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
+
         add_filter( 'wp_mail', [ $this, 'validate_wp_mail_attrs' ] );
+    }
+
+    public function register_rest_routes()
+    {
+        register_rest_route( 'innocode-mailgun/v1', '/address/validate', array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => function ( WP_REST_Request $request ) {
+                return $this->is_valid( $request->get_param( 'address' ) );
+            },
+            'args'                => [
+                'address' => [
+                    'required'          => true,
+                    'validate_callback' => 'is_email',
+                ],
+            ],
+            'permission_callback' => function () {
+                if ( ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
+                    return new WP_Error(
+                        'rest_user_cannot_use_email_validation',
+                        __( 'Sorry, you are not allowed to use email validation.', 'innocode-mailgun-email-validation' ),
+                        [ 'status' => rest_authorization_required_code() ]
+                    );
+                }
+
+                return true;
+            }
+        ) );
     }
 
     /**
@@ -90,7 +123,7 @@ final class Plugin
             $to = explode( ',', $to );
         }
 
-        $attrs['to'] = array_filter( $to, [ $this, 'validate' ] );
+        $attrs['to'] = array_filter( $to, [ $this, 'is_valid' ] );
 
         return $attrs;
     }
@@ -101,7 +134,7 @@ final class Plugin
      * @param string $email
      * @return bool
      */
-    public function validate( $email )
+    public function is_valid( $email )
     {
         if ( ! is_email( $email ) ) {
             return false;
@@ -132,7 +165,7 @@ final class Plugin
 
         $email = $this->get_client()->validate( $email );
 
-        // Probably something is wrong with key or Mailgun, so just ignores validation
+        // Probably something is wrong with key or Mailgun, so just ignore validation.
         if ( is_wp_error( $email ) || ! isset( $email['result'], $email['risk'] ) ) {
             return true;
         }
@@ -148,7 +181,7 @@ final class Plugin
      * @param array $email
      * @return bool
      */
-    public function validated( array $email )
+    protected function validated( array $email )
     {
         // Uses non-strict validation by default
         return apply_filters( 'innocode_mailgun_email_validation_validated', in_array( $email['result'], [
