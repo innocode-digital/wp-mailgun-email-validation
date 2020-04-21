@@ -157,7 +157,7 @@ final class Plugin
         }
 
         $cache_key = sprintf( 'innocode_mailgun_email_validation_%s', md5( $email ) );
-        $cache_value = wp_cache_get( $cache_key );
+        $cache_value = get_transient( $cache_key );
 
         if ( false !== $cache_value ) {
             return $this->validated( $cache_value );
@@ -170,7 +170,9 @@ final class Plugin
             return true;
         }
 
-        wp_cache_set( $cache_key, $email, '', ( 24 * HOUR_IN_SECONDS + wp_rand( 0, ( 12 * HOUR_IN_SECONDS ) ) ) );
+        set_transient( $cache_key, $email,
+            DAY_IN_SECONDS + wp_rand( 0, 12 * HOUR_IN_SECONDS )
+        );
 
         return $this->validated( $email );
     }
