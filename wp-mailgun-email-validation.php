@@ -2,10 +2,10 @@
 /**
  * Plugin Name: Mailgun Email Validation
  * Description: Validates email address through Mailgun.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Author: Innocode
  * Author URI: https://innocode.com
- * Tested up to: 5.4
+ * Tested up to: 5.4.1
  * License: GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */

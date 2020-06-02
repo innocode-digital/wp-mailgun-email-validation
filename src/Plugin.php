@@ -79,7 +79,7 @@ final class Plugin
 
     public function register_rest_routes()
     {
-        register_rest_route( 'innocode-mailgun/v1', '/address/validate', array(
+        register_rest_route( 'innocode/v1', '/mailgun/address/validate', array(
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => function ( WP_REST_Request $request ) {
                 return $this->is_valid( $request->get_param( 'address' ) );
